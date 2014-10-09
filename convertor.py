@@ -11,29 +11,29 @@ class NumToWord(object):
     def __convert_thousand(self, result, last_number):
         result.append(self._source.level[1])
         if last_number == 1:
-            result.append(self._source.endings[9])
+            result.append(self._source.thousand_endings[0])
         if last_number > 1 and last_number < 5:
-            result.append(self._source.endings[10])
-        if last_number >= 5:
-            result.append(self._source.endings[0])
+            result.append(self._source.thousand_endings[1])
+        if last_number >= 5 or last_number == 0:
+            result.append(self._source.thousand_endings[2])
     
     def __convert_uper_order(self, result, last_number, lvl):
         result.append(self._source.level[lvl])
         if last_number == 1:
-            result.append(self._source.endings[0])
+            result.append(self._source.upper_mln_endings[0])
         if last_number > 1 and last_number < 5:
-            result.append(self._source.endings[1])
-        if last_number >= 5:
-            result.append(self._source.endings[2])
+            result.append(self._source.upper_mln_endings[1])
+        if last_number >= 5 or last_number == 0:
+            result.append(self._source.upper_mln_endings[2])
 
     def __convert_currency(self, result, last_number):
         result.append(self._source.currency)
         if last_number == 1:
-            result.append(self._source.endings[3])
+            result.append(self._source.currency_endings[0])
         if last_number > 1 and last_number < 5:
-            result.append(self._source.endings[4])
-        if last_number >= 5:
-            result.append(self._source.endings[5])
+            result.append(self._source.currency_endings[1])
+        if last_number >= 5 or last_number == 0:
+            result.append(self._source.currency_endings[2])
 
     def __convert_whole_part(self, whole, output):
         iter_counter = 0
@@ -52,8 +52,8 @@ class NumToWord(object):
                     converted_part.append(self._source.dozens[dozens])
                     hundred_rest %= 10
                 if hundred_rest:
-                    if hundred_rest <= 2 and iter_counter >= 2:
-                        converted_part.append(self._source.uper_mln_case[hundred_rest])
+                    if hundred_rest <= 2 and iter_counter <= 2:
+                        converted_part.append(self._source.cpecial_case[hundred_rest])
                     else:
                         converted_part.append(self._source.teens[hundred_rest])
                 if iter_counter >= 2:
@@ -69,11 +69,11 @@ class NumToWord(object):
     def __convert_coins_name(self, quantity, output):
         output.append(self._source.coins)
         if quantity == 1:
-            output.append(self._source.endings[6])
+            output.append(self._source.coins_endings[0])
         if quantity > 1 and quantity < 5:
-            output.append(self._source.endings[7])
-        if quantity >= 5:
-            output.append(self._source.endings[8])
+            output.append(self._source.coins_endings[1])
+        if quantity >= 5 or quantity == 0:
+            output.append(self._source.coins_endings[2])
 
     def __convert_coins_part(self, coins, output):
         if len(coins) == 1: #one digit protection (0.5 muts be "fifty" not "five")
@@ -88,7 +88,10 @@ class NumToWord(object):
             output.append(', '+self._source.dozens[dozens])
             coins %= 10
         if coins:
-            output.append(self._source.teens[coins])
+            if coins <= 2:
+                output.append(self._source.cpecial_case[coins])
+            else:
+                output.append(self._source.teens[coins])
         self.__convert_coins_name(coins, output)
 
     def convert(self, number):
@@ -103,4 +106,4 @@ class NumToWord(object):
 
 if __name__ == '__main__':
     r = NumToWord('ua')
-    print r.convert('1233455667.31')
+    print r.convert('5233451660.30')

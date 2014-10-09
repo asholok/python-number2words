@@ -6,6 +6,6 @@ sys.path.insert(0,PATH_TO_RULES)
 import languages
 
 languages = {
-	'ua': languages.Ua,
+	'ua': languages.Ua('uah'),
 	
 }
