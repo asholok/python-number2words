@@ -1,39 +1,48 @@
 
-from localization import languages
+import localization
 
 class NumToWord(object):
-    def __init__(self, language):
-        language = language.lower()
-        if language not in languages:
-            raise Exception('Language is no available')
-        self._source = languages[language]
+    def __init__(self, language, currency):
+        self._language = language.lower()
+        self._currency = currency.lower()
+        self._source = localization.languages[self._language](currency)
+        self._coins_plural_fem = localization.Plural.chek_coins_fem(self._currency)
+        self._currency_plural_fem = localization.Plural.chek_currency_fem(self._currency)
 
-    def __convert_thousand(self, result, last_number):
-        result.append(self._source.level[1])
+    def __convert_thousand(self, output, last_number):
+        output.append(self._source.level[1])
         if last_number == 1:
-            result.append(self._source.thousand_endings[0])
+            output.append(self._source.thousand_endings[0])
         if last_number > 1 and last_number < 5:
-            result.append(self._source.thousand_endings[1])
+            output.append(self._source.thousand_endings[1])
         if last_number >= 5 or last_number == 0:
-            result.append(self._source.thousand_endings[2])
+            output.append(self._source.thousand_endings[2])
     
-    def __convert_uper_order(self, result, last_number, lvl):
-        result.append(self._source.level[lvl])
+    def __convert_uper_order(self, output, last_number, lvl):
+        output.append(self._source.level[lvl])
         if last_number == 1:
-            result.append(self._source.upper_mln_endings[0])
+            output.append(self._source.upper_mln_endings[0])
         if last_number > 1 and last_number < 5:
-            result.append(self._source.upper_mln_endings[1])
+            output.append(self._source.upper_mln_endings[1])
         if last_number >= 5 or last_number == 0:
-            result.append(self._source.upper_mln_endings[2])
+            output.append(self._source.upper_mln_endings[2])
 
-    def __convert_currency(self, result, last_number):
-        result.append(self._source.currency)
+    def __convert_currency(self, output, last_number):
+        output.append(self._source.currency)
         if last_number == 1:
-            result.append(self._source.currency_endings[0])
+            output.append(self._source.currency_endings[0])
         if last_number > 1 and last_number < 5:
-            result.append(self._source.currency_endings[1])
+            output.append(self._source.currency_endings[1])
         if last_number >= 5 or last_number == 0:
-            result.append(self._source.currency_endings[2])
+            output.append(self._source.currency_endings[2])
+
+    def __convert_teens(self, output, last_number, lvl):
+        if self._currency_plural_fem and last_number <= 2 and lvl <= 2:
+            output.append(self._source.cpecial_case[last_number])
+        elif last_number <= 2 and lvl == 2:
+            output.append(self._source.cpecial_case[last_number])
+        else:
+            output.append(self._source.teens[last_number])
 
     def __convert_whole_part(self, whole, output):
         iter_counter = 0
@@ -52,10 +61,7 @@ class NumToWord(object):
                     converted_part.append(self._source.dozens[dozens])
                     hundred_rest %= 10
                 if hundred_rest:
-                    if hundred_rest <= 2 and iter_counter <= 2:
-                        converted_part.append(self._source.cpecial_case[hundred_rest])
-                    else:
-                        converted_part.append(self._source.teens[hundred_rest])
+                    self.__convert_teens(converted_part, hundred_rest, iter_counter)
                 if iter_counter >= 2:
                     self.__convert_uper_order(converted_part, hundred_rest, iter_counter)
                 if iter_counter == 1:
@@ -79,7 +85,7 @@ class NumToWord(object):
         if len(coins) == 1: #one digit protection (0.5 muts be "fifty" not "five")
             output.append(', '+self._source.dozens[int(coins)])
             output.append(self._source.coins)
-            output.append(self._source.endings[8])
+            output.append(self._source.coins_endings[2])
             return
         coins = int(coins)
 
@@ -88,7 +94,7 @@ class NumToWord(object):
             output.append(', '+self._source.dozens[dozens])
             coins %= 10
         if coins:
-            if coins <= 2:
+            if self._coins_plural_fem and coins <= 2:
                 output.append(self._source.cpecial_case[coins])
             else:
                 output.append(self._source.teens[coins])
@@ -105,5 +111,5 @@ class NumToWord(object):
         return ''.join(result)
 
 if __name__ == '__main__':
-    r = NumToWord('ua')
-    print r.convert('5233451660.30')
+    r = NumToWord('ua', 'eur')
+    print r.convert('5233451661.31')

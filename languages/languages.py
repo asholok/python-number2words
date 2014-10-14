@@ -11,27 +11,60 @@ hundreds_ua = {1: 'сто ', 2: 'двісті ', 3: 'триста ', 4: 'чот�
 cpecial_case_ua = {1: 'одна ', 2: 'дві '}
 currency_uah = 'грив'
 currency_rub = 'руб'
+currency_eur = 'євро'
+currency_usd = 'доллар'
 coins_ua = 'копій'
+coins_cent = 'цент'
 level_ua = {1: 'тисяч', 2: 'мільйон', 3: 'мільярд', 4: 'трильйон', 5: 'квадрильйон'}
 currency_endings_uah = ['ня', 'ні', 'ень'] 
+currency_endings_rub = ['ель', 'лі', 'лів']
+currency_endings_eur = ['', '', '']
 thousand_endings_ua = ['a ', 'і ', ' ']
 upper_mln_endings_ua = [' ', 'и ', 'ів ']
+currency_endings_usd = ['', 'и', 'ів']
 coins_endings_ua = ['ка ', 'ки ', 'ок ']
+
+CURRENCIES = ['eur', 'rub', 'uah', 'usd']
 
 class Ua(object):
 	def __init__(self, currency_value):
-		if currency_value == 'uah':
-			self._set_uah()
-		
-	def _set_uah(self):
 		self.teens = teens_ua
 		self.dozens = dozens_ua
 		self.hundreds = hundreds_ua
 		self.cpecial_case = cpecial_case_ua
-		self.currency = currency_uah
-		self.coins = coins_ua
 		self.level = level_ua
-		self.currency_endings = currency_endings_uah
 		self.thousand_endings = thousand_endings_ua
 		self.upper_mln_endings = upper_mln_endings_ua
+		
+		if currency_value == 'uah':
+			self._set_uah()
+		if currency_value == 'rub':
+			self._set_rub()
+		if currency_value == 'eur':
+			self._set_eur()
+		if currency_value == 'usd':
+			self._set_usd()
+	
+	def _set_uah(self):
+		self.currency = currency_uah
+		self.currency_endings = currency_endings_uah
+		self.coins = coins_ua
 		self.coins_endings = coins_endings_ua
+
+	def _set_rub(self):
+		self.currency = currency_rub
+		self.currency_endings = currency_endings_rub
+		self.coins = coins_ua
+		self.coins_endings = coins_endings_ua
+
+	def _set_usd(self):
+		self.currency = currency_usd
+		self.currency_endings = currency_endings_usd
+		self.coins = coins_cent
+		self.coins_endings = upper_mln_endings_ua
+
+	def _set_eur(self):
+		self.currency = currency_eur
+		self.currency_endings = currency_endings_eur
+		self.coins = coins_cent
+		self.coins_endings = upper_mln_endings_ua
