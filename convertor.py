@@ -5,9 +5,12 @@ class NumToWord(object):
     def __init__(self, language, currency):
         self._language = language.lower()
         self._currency = currency.lower()
-        self._source = localization.languages[self._language](currency)
-        self._coins_plural_fem = localization.Plural.chek_coins_fem(self._currency)
-        self._currency_plural_fem = localization.Plural.chek_currency_fem(self._currency)
+        self._source = localization.languages[self._language]
+        self._coins_plural_fem = localization.check_coins_fem(self._currency)
+        self._currency_plural_fem = localization.check_currency_fem(self._currency)
+        self._lang_family = localization.check_lang_family(self._language)
+
+        self._source(self._currency)
 
     def __convert_thousand(self, output, last_number):
         output.append(self._source.level[1])
@@ -37,22 +40,26 @@ class NumToWord(object):
             output.append(self._source.currency_endings[2])
 
     def __convert_teens(self, output, last_number, lvl):
-        if self._currency_plural_fem and last_number <= 2 and lvl <= 2:
+        if self._currency_plural_fem and last_number <= 2 and lvl <= 1:
             output.append(self._source.cpecial_case[last_number])
-        elif last_number <= 2 and lvl == 2:
+        elif last_number <= 2 and lvl == 1:
             output.append(self._source.cpecial_case[last_number])
         else:
             output.append(self._source.teens[last_number])
 
     def __convert_whole_part(self, whole, output):
         iter_counter = 0
+        
+        if self._lang_family == 'rom' and int(whole) == 1:
+            output.insert(0, self._source.teens[part]+self._source.currency[:-1])
+            return
 
         while whole:
             converted_part = []
             part = int(whole[-3:])
             hundreds = int(part/100)
             hundred_rest = part%100
-
+            
             if part:
                 if hundreds:
                     converted_part.append(self._source.hundreds[hundreds])
@@ -88,7 +95,11 @@ class NumToWord(object):
             output.append(self._source.coins_endings[2])
             return
         coins = int(coins)
-
+        
+        if self._lang_family == 'rom' and coins == 1:
+            output.append(', '+self._source.teens[coins]+self._source.coins[:-1])
+            return
+        
         if coins >= 20:
             dozens = int(coins/10)
             output.append(', '+self._source.dozens[dozens])
@@ -111,5 +122,5 @@ class NumToWord(object):
         return ''.join(result)
 
 if __name__ == '__main__':
-    r = NumToWord('ua', 'eur')
-    print r.convert('5233451661.31')
+    r = NumToWord('eng', 'uah')
+    print r.convert('5231451661.01')
