@@ -87,12 +87,21 @@ class NumToWord(object):
             output.append(self._source.coins_endings[1])
         if quantity >= 5 or quantity == 0:
             output.append(self._source.coins_endings[2])
-
+    
+    def __whole_tenth_coins(self, coins, output):
+        coins = int(coins)
+        
+        if coins == 1:
+            output.append(', '+self._source.teens[10])
+        else:
+            output.append(', '+self._source.dozens[coins])
+        
+        output.append(self._source.coins)
+        output.append(self._source.coins_endings[2])
+    
     def __convert_coins_part(self, coins, output):
         if len(coins) == 1: #one digit protection (0.5 muts be "fifty" not "five")
-            output.append(', '+self._source.dozens[int(coins)])
-            output.append(self._source.coins)
-            output.append(self._source.coins_endings[2])
+            self.__whole_tenth_coins(coins, output)
             return
         coins = int(coins)
         
@@ -123,4 +132,4 @@ class NumToWord(object):
 
 if __name__ == '__main__':
     r = NumToWord('eng', 'uah')
-    print r.convert('5231451661.01')
+    print r.convert('5231451661.1')
