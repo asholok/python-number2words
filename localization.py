@@ -7,7 +7,7 @@ import languages as langs
 from blanck import Blanck
 
 languages = { lang.preffix: Blanck(lang) for lang in langs.lang_list }
-
+available_currenceis = { lang.preffix: lang.CURRENCIES for lang in langs.lang_list }
 
 def check_coins_fem(val):
 	if val in langs.coins_fem:
