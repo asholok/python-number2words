@@ -51,7 +51,7 @@ class NumToWord(object):
         iter_counter = 0
         
         if self._lang_family == 'rom' and int(whole) == 1:
-            output.insert(0, self._source.teens[part]+self._source.currency[:-1])
+            output.insert(0, self._source.teens[1]+self._source.currency[:-1])
             return
 
         while whole:
