@@ -92,44 +92,54 @@ class NumToWord(object):
         coins = int(coins)
         
         if coins == 1:
-            output.append(', '+self._source.teens[10])
+            output.append(self._source.teens[10])
         else:
-            output.append(', '+self._source.dozens[coins])
+            output.append(self._source.dozens[coins])
         
         output.append(self._source.coins)
         output.append(self._source.coins_endings[2])
     
     def __convert_coins_part(self, coins, output):
+        result = []
         if len(coins) == 1: #one digit protection (0.5 muts be "fifty" not "five")
-            self.__whole_tenth_coins(coins, output)
+            self.__whole_tenth_coins(coins, result)
+            output.append(''.join(result))
             return
         coins = int(coins)
         
         if self._lang_family == 'rom' and coins == 1:
-            output.append(', '+self._source.teens[coins]+self._source.coins[:-1])
+            output.append(self._source.teens[coins]+self._source.coins[:-1])
             return
         
         if coins >= 20:
             dozens = int(coins/10)
-            output.append(', '+self._source.dozens[dozens])
+            result.append(self._source.dozens[dozens])
             coins %= 10
         if coins:
             if self._coins_plural_fem and coins <= 2:
-                output.append(self._source.cpecial_case[coins])
+                result.append(self._source.cpecial_case[coins])
             else:
-                output.append(self._source.teens[coins])
-        self.__convert_coins_name(coins, output)
+                result.append(self._source.teens[coins])
+        self.__convert_coins_name(coins, result)
+        output.append(''.join(result))
 
+    def __chech_coma_necessity(self, array):
+        return ', '.join([ x for x in array if x])
+    
     def convert(self, number):
         result = []
         number_array = number.split('.')
 
         self.__convert_whole_part(number_array[0], result)
+        result = [''.join(result)]
         if len(number_array) == 2:
             if number_array[1]:
                 self.__convert_coins_part(number_array[1], result)
-        return ''.join(result)
+        
+        print result
+        
+        return self.__chech_coma_necessity(result)
 
-if __name__ == '__main__':
-    r = NumToWord('eng', 'uah')
-    print r.convert('5231451661.1')
+# if __name__ == '__main__':
+#     r = NumToWord('eng', 'uah')
+#     print r.convert('0.1')
