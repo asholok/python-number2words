@@ -1,7 +1,7 @@
 
 import localization
 
-class NumToWord(object):
+class NumToWords(object):
     def __init__(self, language, currency):
         self._language = language.lower()
         self._currency = currency.lower()
@@ -128,7 +128,7 @@ class NumToWord(object):
     
     def convert(self, number):
         result = []
-        number_array = number.split('.')
+        number_array = str(number).split('.')
 
         self.__convert_whole_part(number_array[0], result)
         result = [''.join(result)]
@@ -141,5 +141,5 @@ class NumToWord(object):
         return self.__chech_coma_necessity(result)
 
 # if __name__ == '__main__':
-#     r = NumToWord('eng', 'uah')
+#     r = NumToWords('eng', 'uah')
 #     print r.convert('0.1')
