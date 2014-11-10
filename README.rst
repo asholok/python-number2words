@@ -13,16 +13,17 @@ SYNOPSIS
 Common usage::
 	from Number2words import converter
 
-	language = 'eng'
-	currency = 'usd'
-	number = 1342.17 # or string '1342.17'
-	conv = converter.NumToWords(language, currency)
-	result = conv.convert(number)
+	language = 'eng';
+	currency = 'usd';
+	number = 1342.17 # or string '1342.17';
+	conv = converter.NumToWords(language, currency);
+	result = conv.convert(number);
 
 Available language and currencies::
 	from Number2words import localization
 
 	# dict where key is available language and value is available currenceis
+
 	languages_currencies = localization.available_currenceis
 
 DESCRIPTION
